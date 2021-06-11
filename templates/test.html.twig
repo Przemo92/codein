@@ -17,12 +17,14 @@
         border-style: solid;
         border-width: 2px;
         height: 500px;
+        padding: 10px;
     }
     button {
         margin: 40px 20px;
     }
     .sortable1 {
         width: 500px;
+        padding: 10px;
     }
     .status {
         text-align: center;
@@ -49,7 +51,11 @@
             {% for taskWithStatusWaiting in tasksWithStatusWaiting %}
 
                 <a href="{{ path('edit', {'id': taskWithStatusWaiting.id}) }}">
-                    <div id="item-{{ taskWithStatusWaiting.id }}" data-id="{{ taskWithStatusWaiting.id }}" class="list-group-item nested-1">{{ taskWithStatusWaiting.title }}
+                    <div id="item-{{ taskWithStatusWaiting.id }}" data-id="{{ taskWithStatusWaiting.id }}" class="list-group-item nested-1">
+                        <span> Title: {{ taskWithStatusWaiting.title }}</span><br>
+                        {% if taskWithStatusWaiting.user %}
+                            <span> Assign user id: {{ taskWithStatusWaiting.user.id }}</span>
+                        {% endif %}
                         <a onclick="return confirm('Are you sure to delete?')" href="{{ path('delete', {'id': taskWithStatusWaiting.id}) }}">
                             <span class="close">X</span>
                         </a>
@@ -65,7 +71,11 @@
             {% for taskWithStatusDone in tasksWithStatusDone %}
 
             <a href="{{ path('edit', {'id': taskWithStatusDone.id}) }}">
-                <div id="item-{{ taskWithStatusDone.id }}" data-id="{{ taskWithStatusDone.id }}" class="list-group-item nested-1">{{ taskWithStatusDone.title }}
+                <div id="item-{{ taskWithStatusDone.id }}" data-id="{{ taskWithStatusDone.id }}" class="list-group-item nested-1">
+                    <span> Title: {{ taskWithStatusDone.title }}</span><br>
+                    {% if taskWithStatusDone.user %}
+                        <span> Assign user id: {{ taskWithStatusDone.user.id }}</span>
+                    {% endif %}
                     <a onclick="return confirm('Are you sure to delete?')" href="{{ path('delete', {'id': taskWithStatusDone.id}) }}">
                         <span class="close">X</span>
                     </a>
@@ -80,7 +90,11 @@
             {% for taskWithStatusRejected in tasksWithStatusRejected %}
 
             <a href="{{ path('edit', {'id': taskWithStatusRejected.id}) }}">
-                <div id="item-{{ taskWithStatusRejected.id }}" data-id="{{ taskWithStatusRejected.id }}" class="list-group-item nested-1">{{ taskWithStatusRejected.title }}
+                <div id="item-{{ taskWithStatusRejected.id }}" data-id="{{ taskWithStatusRejected.id }}" class="list-group-item nested-1">
+                    <span> Title: {{ taskWithStatusRejected.title }}</span><br>
+                    {% if taskWithStatusRejected.user %}
+                    <span> Assign user id: {{ taskWithStatusRejected.user.id }}</span>
+                    {% endif %}
                     <a onclick="return confirm('Are you sure to delete?')" href="{{ path('delete', {'id': taskWithStatusRejected.id}) }}">
                         <span class="close">X</span>
                     </a>

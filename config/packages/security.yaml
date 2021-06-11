@@ -31,5 +31,12 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-    # - { path: ^/admin, roles: ROLE_ADMIN }
-    # - { path: ^/profile, roles: ROLE_USER }
+        - { path: '/create', roles: ROLE_ADMIN }
+        - { path: '/switch-status', roles: ROLE_ADMIN }
+        - { path: '/delete/*', roles: ROLE_ADMIN }
+        - { path: '/edit/*', roles: ROLE_ADMIN }
+        - { path: '/list', roles: ROLE_ADMIN }
+        - { path: '/edit-task/*', roles: ROLE_ADMIN }
+        - { path: '/delete-assigned-user/*', roles: ROLE_ADMIN }
+        - { path: '/add-related-task/*', roles: ROLE_ADMIN }
+
