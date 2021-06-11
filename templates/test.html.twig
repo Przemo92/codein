@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>JS Bin</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+</head>
+
+<style>
+    .ghost {
+        opacity: 0.4;
+    }
+    .list-group {
+        margin: 20px;
+        border-style: solid;
+        border-width: 2px;
+        height: 500px;
+    }
+    button {
+        margin: 40px 20px;
+    }
+    .sortable1 {
+        width: 500px;
+    }
+    .status {
+        text-align: center;
+    }
+</style>
+
+<body>
+<div class="header">
+    <h2>Create new task</h2>
+    <form method="POST" action="{{ path('create_task') }}">
+        <label for="myTitle">Title</label>
+        <input name="title" type="text" id="myTitle" placeholder="Task title..." required/>
+        <label for="myDescription">Description</label>
+        <input name="description" type="text" id="myDescription" placeholder="Task description..." required/>
+        <label for="myDeadline">Deadline</label>
+        <input name="deadline" type="date" id="myDeadline" placeholder="Task title..." />
+        <button type="submit" class="addBtn">Add a task</button>
+    </form>
+</div>
+<div id="demo" class="row">
+    <div class="sortable1">
+        <h3 class="status">Status waiting</h3>
+        <div id="items-1" class="list-group col">
+            {% for taskWithStatusWaiting in tasksWithStatusWaiting %}
+
+                <a href="{{ path('edit', {'id': taskWithStatusWaiting.id}) }}">
+                    <div id="item-{{ taskWithStatusWaiting.id }}" data-id="{{ taskWithStatusWaiting.id }}" class="list-group-item nested-1">{{ taskWithStatusWaiting.title }}
+                        <a onclick="return confirm('Are you sure to delete?')" href="{{ path('delete', {'id': taskWithStatusWaiting.id}) }}">
+                            <span class="close">X</span>
+                        </a>
+                    </div>
+                </a>
+
+            {% endfor %}
+        </div>
+    </div>
+    <div class="sortable1">
+        <h3 class="status">Status done</h3>
+        <div id="items-2" class="list-group col">
+            {% for taskWithStatusDone in tasksWithStatusDone %}
+
+            <a href="{{ path('edit', {'id': taskWithStatusDone.id}) }}">
+                <div id="item-{{ taskWithStatusDone.id }}" data-id="{{ taskWithStatusDone.id }}" class="list-group-item nested-1">{{ taskWithStatusDone.title }}
+                    <a onclick="return confirm('Are you sure to delete?')" href="{{ path('delete', {'id': taskWithStatusDone.id}) }}">
+                        <span class="close">X</span>
+                    </a>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="sortable1">
+        <h3 class="status">Status rejected</h3>
+        <div id="items-3" class="list-group col">
+            {% for taskWithStatusRejected in tasksWithStatusRejected %}
+
+            <a href="{{ path('edit', {'id': taskWithStatusRejected.id}) }}">
+                <div id="item-{{ taskWithStatusRejected.id }}" data-id="{{ taskWithStatusRejected.id }}" class="list-group-item nested-1">{{ taskWithStatusRejected.title }}
+                    <a onclick="return confirm('Are you sure to delete?')" href="{{ path('delete', {'id': taskWithStatusRejected.id}) }}">
+                        <span class="close">X</span>
+                    </a>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<button id="get-order" >Save tasks status</button>
+
+
+<script src="https://unpkg.com/sortablejs-make/Sortable.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+
+<script>
+    // List 1
+    $('#items-1').sortable({
+        group: 'list',
+        animation: 200,
+        ghostClass: 'ghost',
+    });
+
+    // List 2
+    $('#items-2').sortable({
+        group: 'list',
+        animation: 200,
+        ghostClass: 'ghost',
+
+    });
+    // List 3
+    $('#items-3').sortable({
+        group: 'list',
+        animation: 200,
+        ghostClass: 'ghost',
+    });
+
+    // Arrays of "data-id"
+    $('#get-order').click(function() {
+        var sort1 = $('#items-1').sortable('toArray');
+        var sort2 = $('#items-2').sortable('toArray');
+        var sort3 = $('#items-3').sortable('toArray');
+        save_sortable();
+        function save_sortable()
+        {
+            $.ajax({
+                url: "/switch-status",
+                type: 'POST',
+                data: {
+                    sort1: sort1,
+                    sort2: sort2,
+                    sort3: sort3,
+                },
+                success: function (data) {
+                    alert('Changes saved');
+                }
+            });
+        }
+
+    });
+
+    // Report when the sort order has changed
+    function reportActivity() {
+        console.log('The sort order has changed');
+    };
+</script>
+</body>
+</html>

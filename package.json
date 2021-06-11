@@ -1,0 +1,7 @@
+{
+  "name": "codein",
+  "version": "1.0.0",
+  "dependencies": {
+    "sortablejs": "^1.13.0"
+  }
+}

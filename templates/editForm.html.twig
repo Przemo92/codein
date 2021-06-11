@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+{% block body %}
+    <body>
+    <h3>Task details</h3>
+    <span>Id: {{ task.id }}</span><br>
+    <span>Title: {{ task.title }}</span><br>
+    <span>Description: {{ task.description }}</span><br>
+    <span>Deadline: {{ task.deadline }}</span><br>
+    <span>Status: {{ task.status }}</span> <br>
+    {% if task.task %}
+    <span>Related task: {{ task.task.id}}</span><br>
+    {% endif %}
+    {% if task.user %}
+        <span>Assigned user: {{ task.user.id }}</span><br>
+        <a href="{{ path('delete-assigned-user', {'taskId': task.id }) }}">Unassigned this task from user</a>
+    {% else %}
+        <a href="{{ path('assign_task_to_user', {'userId': app.user.id, 'taskId': task.id }) }}">Assign this task to yourself</a>
+    {% endif %}
+
+    <div class="header">
+        <h2>Edit task</h2>
+        <form method="POST" action="{{ path('edit_task', {'id': task.id}) }}">
+            <label for="myTitle">Title</label>
+            <input name="title" type="text" id="myTitle" placeholder="Task title..." required/>
+            <label for="myDescription">Description</label>
+            <input name="description" type="text" id="myDescription" placeholder="Task description..." required/>
+            <label for="myDeadline">Deadline</label>
+            <input name="deadline" type="date" id="myDeadline" placeholder="Task title..." />
+            <button type="submit" class="addBtn">Edit task</button>
+        </form>
+    </div>
+    <div class="header">
+        <h2>Add related task</h2>
+        <form method="POST" action="{{ path('add_related_task', {'taskId': task.id}) }}">
+            <label for="myTitle">Id related task</label>
+            <input name="relatedTask" type="text" id="myTask" placeholder="Id related task..."/>
+
+            <button type="submit" class="addBtn">Add related task</button>
+        </form>
+    </div>
+    <br><br>
+    <div class="mb-3">
+        Check list of tasks <a href="{{ path('task_manager') }}">here</a>
+    </div>
+
+    </body>
+{% endblock %}
