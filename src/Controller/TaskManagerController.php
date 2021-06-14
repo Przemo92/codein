@@ -50,28 +50,14 @@ class TaskManagerController extends AbstractController
      */
     public function switchStatus(Request $request): Response
     {
+        $waitingTasks = $request->request->get('sort1');
+        $doneTasks = $request->request->get('sort2');
+        $rejectedTasks = $request->request->get('sort3');
 
-        if ($waitingTasks = $request->request->get('sort1')) {
-            foreach ($waitingTasks as $id) {
-                $task = $this->getDoctrine()->getRepository(Task::class)->findOneBy(['id' => $id]);
-                $task->setStatus(self::STATUS_WAITING);
-                $this->entityManager->persist($task);
-            }
-        }
-        if ($doneTasks = $request->request->get('sort2')) {
-            foreach ($doneTasks as $id) {
-                $task = $this->getDoctrine()->getRepository(Task::class)->findOneBy(['id' => $id]);
-                $task->setStatus(self::STATUS_DONE);
-                $this->entityManager->persist($task);
-            }
-        }
-        if ($rejectedTasks = $request->request->get('sort3')) {
-            foreach ($rejectedTasks as $id) {
-                $task = $this->getDoctrine()->getRepository(Task::class)->findOneBy(['id' => $id]);
-                $task->setStatus(self::STATUS_REJECTED);
-                $this->entityManager->persist($task);
-            }
-        }
+        $this->changeTaskStatus($waitingTasks, self::STATUS_WAITING);
+        $this->changeTaskStatus($doneTasks, self::STATUS_DONE);
+        $this->changeTaskStatus($rejectedTasks, self::STATUS_REJECTED);
+
         $this->entityManager->flush();
         return new Response(
             'There are no jobs in the database',
@@ -167,5 +153,15 @@ class TaskManagerController extends AbstractController
     public function saveToDataBase(Object $task) {
         $this->entityManager->persist($task);
         $this->entityManager->flush();
+    }
+
+    public function changeTaskStatus(array $tasks, string $status) {
+        if ($tasks) {
+            foreach ($tasks as $id) {
+                $task = $this->getDoctrine()->getRepository(Task::class)->findOneBy(['id' => $id]);
+                $task->setStatus($status);
+                $this->entityManager->persist($task);
+            }
+        }
     }
 }
