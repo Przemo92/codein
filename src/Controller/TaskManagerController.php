@@ -9,6 +9,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use function PHPUnit\Framework\throwException;
 
 class TaskManagerController extends AbstractController
 {
@@ -82,7 +83,13 @@ class TaskManagerController extends AbstractController
     public function editionForm($id): Response
     {
         $task = $this->getDoctrine()->getRepository(Task::class)->findOneBy(['id' => $id]);
-        return $this->render("editForm.html.twig", ['task' => $task]);
+        //dd($task);
+        $relatedTasks = $this->getDoctrine()->getRepository(Task::class)->findBy(["parent" => $id]);
+
+        return $this->render("editForm.html.twig", [
+            'task' => $task,
+            'related_tasks' => $relatedTasks
+        ]);
     }
     /**
      * @Route("/list", name="task_manager")
@@ -136,20 +143,39 @@ class TaskManagerController extends AbstractController
 
         return $this->redirectToRoute('edit', ['id' => $taskId]);
     }
+
     /**
-     * @Route("/add-related-task/{taskId}", name="add_related_task", methods = {"POST"})
+     * @Route("/add-related-task/{taskId}", name="add-related-task", methods = {"POST"})
+     * @throws \Exception
      */
     public function addRelatedTask(Request $request, $taskId): Response
     {
-        $task = $this->getDoctrine()->getRepository(Task::class)->findOneBy(['id' => $taskId]);
         $relatedTaskId = $request->request->get('relatedTask');
-        $task->setTask($this->getDoctrine()->getRepository(Task::class)->findOneBy(['id' => $relatedTaskId]));
+        $task = $this->getDoctrine()->getRepository(Task::class)->findOneBy(['id' => $taskId]);
+        $relatedTask = $this->getDoctrine()->getRepository(Task::class)->findOneBy(['id' => $relatedTaskId]);
+        if ($relatedTaskId != $taskId && !$relatedTask->getParent()) {
+            $relatedTask->setParent($task);
+        } else {
+            throw new \Exception("Can not create this relation");
+        }
+
+        $this->saveToDataBase($relatedTask);
+
+        return $this->redirectToRoute('edit', ['id' => $taskId]);
+    }
+
+    /**
+     * @Route("/delete-related-task/{relatedTaskId}{taskId}", name="delete-relation")
+     */
+    public function deleteRelatedTask($relatedTaskId, $taskId): Response
+    {
+        $task = $this->getDoctrine()->getRepository(Task::class)->findOneBy(['id' => $relatedTaskId]);
+        $task->setParent(NULL);
 
         $this->saveToDataBase($task);
 
         return $this->redirectToRoute('edit', ['id' => $taskId]);
     }
-
     public function saveToDataBase(Object $task) {
         $this->entityManager->persist($task);
         $this->entityManager->flush();

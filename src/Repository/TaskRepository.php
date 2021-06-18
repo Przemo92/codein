@@ -20,7 +20,7 @@ class TaskRepository extends ServiceEntityRepository
     }
 
     // /**
-    //  * @return Task[] Returns an array of Task objects
+    //  * @return TaskFixtures[] Returns an array of TaskFixtures objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class TaskRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Task
+    public function findOneBySomeField($value): ?TaskFixtures
     {
         return $this->createQueryBuilder('t')
             ->andWhere('t.exampleField = :val')

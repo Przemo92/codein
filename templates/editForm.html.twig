@@ -7,8 +7,15 @@
     <span>Description: {{ task.description }}</span><br>
     <span>Deadline: {{ task.deadline }}</span><br>
     <span>Status: {{ task.status }}</span> <br>
-    {% if task.task %}
-    <span>Related task: {{ task.task.id}}</span><br>
+    {% if related_tasks %}
+    <span>Related tasks:
+        {% for related_task in related_tasks %}
+            {{ related_task.id }}
+            <a onclick="return confirm('Are you sure to this relation?')" href="{{ path('delete-relation', {'relatedTaskId': related_task.id, 'taskId': task.id }) }}">
+                <span class="close">X</span>
+            </a>||
+        {% endfor %}
+        </span><br>
     {% endif %}
     {% if task.user %}
         <span>Assigned user: {{ task.user.id }}</span><br>
@@ -31,7 +38,7 @@
     </div>
     <div class="header">
         <h2>Add related task</h2>
-        <form method="POST" action="{{ path('add_related_task', {'taskId': task.id}) }}">
+        <form method="POST" action="{{ path('add-related-task', {'taskId': task.id}) }}">
             <label for="myTitle">Id related task</label>
             <input name="relatedTask" type="text" id="myTask" placeholder="Id related task..."/>
 

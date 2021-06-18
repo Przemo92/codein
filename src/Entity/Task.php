@@ -40,9 +40,9 @@ class Task
     private $deadline;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Task::class, inversedBy="task")
+     * @ORM\ManyToOne(targetEntity=Task::class)
      */
-    private $task;
+    private $parent;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="tasks")
@@ -103,39 +103,24 @@ class Task
         return $this;
     }
 
-    public function getTask(): ?self
+    /**
+     * @return mixed
+     */
+    public function getParent()
     {
-        return $this->task;
+        return $this->parent;
     }
 
-    public function setTask(?self $task): self
+    /**
+     * @param mixed $parent
+     * @return Task
+     */
+    public function setParent($parent)
     {
-        $this->task = $task;
-
+        $this->parent = $parent;
         return $this;
     }
 
-    public function addTask(self $task): self
-    {
-        if (!$this->task->contains($task)) {
-            $this->task[] = $task;
-            $task->setTask($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTask(self $task): self
-    {
-        if ($this->task->removeElement($task)) {
-            // set the owning side to null (unless already changed)
-            if ($task->getTask() === $this) {
-                $task->setTask(null);
-            }
-        }
-
-        return $this;
-    }
 
     public function getUser(): ?User
     {
